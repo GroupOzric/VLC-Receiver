@@ -2,5 +2,5 @@
 /build
 /.idea
 /opencvd
-*.iml
+# *.iml
 local.properties

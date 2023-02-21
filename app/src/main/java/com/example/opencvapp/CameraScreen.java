@@ -75,6 +75,7 @@ public class CameraScreen extends CameraActivity {
             String detectedString = "";
             String detectedStringWindow = "";
             String detectedText = "";
+            int textLength = 0;
 //            boolean readingStarted = false;
             List<Integer> detectionList =new ArrayList<Integer>();
             final CameraBridgeViewBase.CvCameraViewListener2 context = this;
@@ -123,7 +124,7 @@ public class CameraScreen extends CameraActivity {
 
                 // Filter by area  & (maxCounterArea < 7000)
 //10000
-                if ((maxCounterArea > 1500)) {
+                if ((maxCounterArea > 20000)) {
                     // Further filter by shape and other properties
 //                    detectionList.add(1);
                     notDetectedFrames = 0;
@@ -144,25 +145,25 @@ public class CameraScreen extends CameraActivity {
 
                     notDetectedFrames++;
                     //4
-                    if(notDetectedFrames > 5){
+                    if(notDetectedFrames > 2){
                         //                    Log.d("FLASH", "UNTIL THIS END .................."+ Integer.toString(detectedFrames));
 ////                    detectionList.add(0);
-                        //10
-                        if(detectedFrames > 8){
+                        //8
+                        if(detectedFrames >= 5){
 //                    Log.d("FLASH", );
                             detectedString = detectedString + "0";
                             detectedStringWindow = detectedStringWindow + "0";
                             Log.d("FLASH", "String.................."+ detectedString);
                             String showText = detectedString+"  ..  "+detectedText;
-                            textView2.setText(showText);
+//                            textView2.setText(showText);
 //                            Log.d("FLASH", "0 DETECTED .................."+ Integer.toString(detectedFrames));
-                        }else if (detectedFrames> 0){
+                        }else if( (detectedFrames> 1) & (detectedString.length() > 0)){
 //                        Log.d("FLASH", Integer.toString(detectedFrames));
                             detectedString = detectedString + "1";
                             detectedStringWindow = detectedStringWindow + "1";
                             Log.d("FLASH", "String.................."+ detectedString);
                             String showText = detectedString+"  ..  "+detectedText;
-                            textView2.setText(showText);
+//                            textView2.setText(showText);
 //                            Log.d("FLASH", "1 DETECTED .................."+ Integer.toString(detectedFrames));
                         }
 
@@ -175,10 +176,23 @@ public class CameraScreen extends CameraActivity {
                             int checkStringlength = detectedStringWindow.length();
                             String checkString = detectedStringWindow.substring(checkStringlength-8, checkStringlength);
                             int number = Integer.parseInt(checkString, 2);
-                            char ch = (char) number;
-                            detectedText = detectedText + ch;
-                            String showText = detectedString+"  ..  "+detectedText;
-                            textView2.setText(showText);
+
+//                          receiving the length of text
+                            if(textLength == 0){
+                                textLength = number;
+//                                receiving the rest
+                            }else{
+                                char ch = (char) number;
+                                detectedText = detectedText + ch;
+                                String showText = detectedText; //+"  ..  "+detectedText;
+                                textView2.setText(showText);
+                            }
+//                          if length is match
+                            if(detectedText.length() == textLength){
+                                Intent intent = new Intent(CameraScreen.this, MainActivity.class);
+                                intent.putExtra("key", detectedText);
+                                startActivity(intent);
+                            }
 
                             detectedStringWindow = "";
                         }
